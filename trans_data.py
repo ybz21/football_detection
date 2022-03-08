@@ -24,7 +24,7 @@ def main():
                 # line example: 1 0.538086 0.871353 0.089844 0.111406
                 infos=line.strip().split(' ')
                 if len(infos)==5:
-                    final_info=f'UNASSIGNED,{img_path},cls_{infos[0]},{infos[1]},{infos[2]},{infos[3]},{infos[4]}\n'
+                    final_info=f'UNASSIGNED,{img_path},cls_{infos[0]},{infos[1]},{infos[2]},,,{infos[3]},{infos[4]},,\n'
                     # print(final_info)
                     csv_lines.append(final_info)
     
