@@ -16,7 +16,7 @@ def main():
     logging.set_verbosity(logging.ERROR)
 
     print('===load spec')
-    spec = model_spec.get('efficientdet_lite2')
+    spec = model_spec.get('efficientdet_lite0')
 
     print('====load-data')
     train_data, validation_data, test_data = object_detector.DataLoader.from_csv('./labels.csv')
@@ -29,7 +29,7 @@ def main():
     model.evaluate(test_data)
     model.export(export_dir='./model_data')
 
-    model.evaluate_tflite('model.tflite', test_data)
+    model.evaluate_tflite('./model_data/model.tflite', test_data)
 
 
 if __name__ == '__main__':
