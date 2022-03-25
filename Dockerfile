@@ -7,10 +7,23 @@ RUN apt-get update && apt-get install -y python3 \
     wget \
     zip
 
+RUN wget https://github.com/coder/code-server/releases/download/v4.1.0/code-server_4.1.0_amd64.deb \
+    --no-verbose \
+    --show-progress \
+    --progress=bar:force:noscroll && \
+    dpkg -i code-server_4.1.0_amd64.deb && \
+    rm -rf code-server_4.1.0_amd64.deb
+
 RUN pip3 install tensorflow \
     tflite-model-maker \
     pycocotools \
     tflite-support \
     flatbuffers==1.12 \
+    gym \
+    ray==1.11.0 \
+    pandas \
     numpy -i  https://pypi.tuna.tsinghua.edu.cn/simple
-# export LD_LIBRARY_PATH=/usr/local/nvidia/lib:/usr/local/nvidia/lib64:/usr/cuda_files/
+
+EXPOSE 8080
+
+ENTRYPOINT ["code-server" ,"--bind-addr=0.0.0.0:8080", "--auth=none"]
