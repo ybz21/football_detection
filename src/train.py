@@ -29,7 +29,7 @@ def main():
 
     print('====exp')
     # config = QuantizationConfig.for_float16()
-    model.export(export_dir='./model_data',
+    model.export(export_dir='../model_data',
                  # export_format=[ExportFormat.TFLITE, ExportFormat.SAVED_MODEL, ExportFormat.LABEL],
                  # quantization_config=config
                  )

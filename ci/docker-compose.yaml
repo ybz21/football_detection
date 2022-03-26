@@ -1,0 +1,22 @@
+version: '2'
+services:
+  mlops-codeserver:  #指定服务名称
+    build: . #指定 Dockerfile 所在路径
+    image: docker.4pd.io/app-dev/mlops:v0.1
+    entrypoint: code-server --bind-addr=0.0.0.0:8080 --auth password
+    expose:
+      - "8080"
+    ports: # 指定端口映射
+      - "9123:8080"
+    devices:
+      - "/dev/nvidiactl:/dev/nvidiactl"
+      - "/dev/nvidia-uvm:/dev/nvidia-uvm"
+      - "/dev/nvidia0:/dev/nvidia0"
+      - "/dev/nvidia1:/dev/nvidia1"
+    volumes:
+      - "/root/yanbingzheng:/root/yanbingzheng"
+      - "/usr/cuda_files:/usr/cuda_files"
+      - "/usr/bin/nvidia-smi:/usr/bin/nvidia-smi"
+    environment:
+      - LD_LIBRARY_PATH=/usr/local/nvidia/lib:/usr/local/nvidia/lib64:/usr/cuda_files/
+      - PASSWORD=yanbingzheng

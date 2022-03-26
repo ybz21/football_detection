@@ -6,11 +6,11 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 # data from https://www.kaggle.com/mlwhiz/detection-footballvscricketball
 
 def main():
-    image_path = os.path.join(current_dir, 'dataset/images')
+    image_path = os.path.join(current_dir, '../dataset/images')
     images = os.listdir(image_path)
     print(f'images: {len(images)}')
 
-    labels_path = os.path.join(current_dir, 'dataset/labels')
+    labels_path = os.path.join(current_dir, '../dataset/labels')
     labels = os.listdir(labels_path)
     print(f'labels: {len(labels)}')
 
@@ -28,7 +28,7 @@ def main():
         else:
             rule = 'TEST'
 
-        label_path = os.path.join(current_dir, 'dataset/labels', label)
+        label_path = os.path.join(current_dir, '../dataset/labels', label)
         with open(label_path) as f:
             image_name = label.replace('.txt', '', 1)
             img_path = f'dataset/images/{image_name}.jpg'
