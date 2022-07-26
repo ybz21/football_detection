@@ -6,8 +6,11 @@
 
 Adafruit_PWMServoDriver cloudPlatform = Adafruit_PWMServoDriver(0x40);
 
-#define SERVOMIN  500 // this is the 'minimum' pulse length count (out of 4096)
-#define SERVOMAX  2500 // this is the 'maximum' pulse length count (out of 4096)
+#define SERVOMIN  150 // This is the 'minimum' pulse length count (out of 4096)
+#define SERVOMAX  600 
+#define USMIN  500  
+#define USMAX  2500 
+#define SERVO_FREQ 50
 
 #define BOTTOMSEVROID 0
 #define TOPSEVROID 1
@@ -31,18 +34,18 @@ void setTopServoAngle(int angle){
 
 void setup() {
   Serial.begin(9600);
-
   Serial.println("16 channel Servo test!");
 
   cloudPlatform.begin();
 
-  cloudPlatform.setPWMFreq(50);  // Analog servos run at ~60 Hz updates
+  cloudPlatform.setOscillatorFrequency(27000000);
+  cloudPlatform.setPWMFreq(SERVO_FREQ); 
 }
 
 
 void loop() {
-    for(int angle =0; angle<181; angle +=10){
-           setBottomServoAngle(angle);
+    for(int angle =0; angle<181; angle +=1){
+          //  setBottomServoAngle(angle);
            setTopServoAngle(angle);
            delay(1000);
     }
