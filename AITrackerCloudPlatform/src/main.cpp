@@ -43,6 +43,7 @@ uint8_t txValue = 0;
 #define SERVICE_UUID           "6E400001-B5A3-F393-E0A9-E50E24DCCA9E" // UART service UUID
 #define CHARACTERISTIC_UUID_RX "6E400002-B5A3-F393-E0A9-E50E24DCCA9E"
 #define CHARACTERISTIC_UUID_TX "6E400003-B5A3-F393-E0A9-E50E24DCCA9E"
+#define BLE_NAME "AITracker"
 
 // define variavles for cloudplatfrom(pca9685)
 #define SERVOMIN  150 
@@ -52,6 +53,24 @@ uint8_t txValue = 0;
 #define SERVO_FREQ 50
 #define BOTTOMSEVROID 0
 #define TOPSEVROID 1
+
+
+int angleToPulse(int ang){
+   int pulse = map(ang,0, 270, SERVOMIN, SERVOMAX);// map angle of 0 to 180 to Servo min and Servo max
+   Serial.print("Angle: ");Serial.print(ang);
+   Serial.print(" pulse: ");Serial.println(pulse);
+   return pulse;
+}
+
+void setBottomServoAngle(int angle){
+  Serial.print("Bottom: ");
+  cloudPlatform.setPWM(BOTTOMSEVROID, 0, angleToPulse(angle));
+}
+
+void setTopServoAngle(int angle){
+  Serial.print("Top: ");
+  cloudPlatform.setPWM(TOPSEVROID, 0, angleToPulse(angle));
+}
 
 
 class MyServerCallbacks: public BLEServerCallbacks {
@@ -90,46 +109,35 @@ class MyCallbacks: public BLECharacteristicCallbacks {
        std::string  bottomAngleStr = rxValue.substr(6,pos);
        std::string  topAngleStr = rxValue.substr(pos+1,rxValue.length());
 
-       Serial.print("bottomAngleStr");  Serial.print(bottomAngleStr.c_str());
-       Serial.print("topAngleStr");  Serial.print(topAngleStr.c_str());
+       Serial.print("bottomAngleStr:");  Serial.println(bottomAngleStr.c_str());
+       Serial.print("topAngleStr:");  Serial.println(topAngleStr.c_str());
 
        bottomAngle=atoi(bottomAngleStr.c_str());
        topAngle=atoi(topAngleStr.c_str());
 
-       Serial.print("bottomAngle");  Serial.print(bottomAngle);
-       Serial.print("topAngle");  Serial.print(topAngle);
-        // setBottomServoAngle(bottomAngle);
-        // setTopServoAngle(topAngle);
+       Serial.print("bottomAngle:");  Serial.println(bottomAngle);
+       Serial.print("topAngle:");  Serial.println(topAngle);
+
+        setBottomServoAngle(bottomAngle);
+        setTopServoAngle(topAngle);
       }
 
     }
 };
 
-int angleToPulse(int ang){
-   int pulse = map(ang,0, 270, SERVOMIN,SERVOMAX);// map angle of 0 to 180 to Servo min and Servo max
-   Serial.print("Angle: ");Serial.print(ang);
-   Serial.print(" pulse: ");Serial.println(pulse);
-   return pulse;
-}
-
-void setBottomServoAngle(int angle){
-  Serial.print("Bottom: ");
-  cloudPlatform.setPWM(BOTTOMSEVROID, 0, angleToPulse(angle));
-}
-
-void setTopServoAngle(int angle){
-  Serial.print("Top: ");
-  cloudPlatform.setPWM(TOPSEVROID, 0, angleToPulse(angle) );
-}
-
-void setup() {
-  Serial.begin(115200);
+void initCloudPlatform() {
+  Serial.println("CloudPlatform init start");
   
-  // init CloudPlatform
-  initCloudPlatform();
+  cloudPlatform.begin();
+  cloudPlatform.setOscillatorFrequency(27000000);
+  cloudPlatform.setPWMFreq(SERVO_FREQ); 
+  
+  Serial.println("CloudPlatform init finish");
+}
 
+void initBLE(){
   // Create the BLE Device
-  BLEDevice::init("AITracker");
+  BLEDevice::init(BLE_NAME);
 
   // Create the BLE Server
   pServer = BLEDevice::createServer();
@@ -161,15 +169,13 @@ void setup() {
   Serial.println("Waiting a client connection to notify...");
 }
 
-void initCloudPlatform() {
-  Serial.println("CloudPlatform init start");
-  
-  cloudPlatform.begin();
-  cloudPlatform.setOscillatorFrequency(27000000);
-  cloudPlatform.setPWMFreq(SERVO_FREQ); 
-  
-  Serial.println("CloudPlatform init finish");
+void setup() {
+  Serial.begin(115200);
+
+  initCloudPlatform();
+  initBLE();
 }
+
 
 void loop() {
 
